@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResuMatch - Resume Matcher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      background-color: #f8f9fa;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    input, textarea, button {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .output {
+      margin-top: 20px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>ResuMatch</h1>
+  <form id="uploadForm">
+    <label for="resume">Upload Resume (PDF/DOCX):</label>
+    <input type="file" id="resume" name="file" accept=".pdf,.docx" required>
+    
+    <label for="jobDescription">Job Description:</label>
+    <textarea id="jobDescription" name="job_description" rows="6" placeholder="Paste job description here..." required></textarea>
+    
+    <button type="submit">Match Resume</button>
+  </form>
+
+  <div id="result" class="output" style="display: none;">
+    <h3>Results</h3>
+    <p><strong>Similarity Score:</strong> <span id="similarityScore"></span>%</p>
+    <p><strong>Matched Keywords:</strong> <span id="matchedKeywords"></span></p>
+    <p><strong>Missing Keywords:</strong> <span id="missingKeywords"></span></p>
+    <p><strong>Suggestions:</strong> <span id="suggestions"></span></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
