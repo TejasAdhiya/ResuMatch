@@ -38,3 +38,7 @@ def calculate_match(resume_text: str, job_description: str):
         "suggestion": f"Consider including keywords like: {', '.join(missing[:5])}" if missing else "Resume looks good!"
     }
 
+
+
+
+
