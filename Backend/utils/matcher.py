@@ -4,7 +4,6 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
 import re
-from utils.openai_clients import get_openai_response
 
 # Predefined set of industry-level keywords
 INDUSTRY_KEYWORDS = {
@@ -30,9 +29,9 @@ def preprocess_text(text):
     filtered_words = [word for word in words if word not in STOPWORDS and word not in PUNCTUATION]
     return " ".join(filtered_words)
 
-def calculate_match(resume_text, job_description):
+async def calculate_match(resume_text, job_description):
     """
-    Calculate similarity score and extract keywords using TF-IDF and NLTK.
+    Calculate similarity score, extract keywords, and provide suggestions for improvement.
     """
     # Preprocess texts
     resume_cleaned = preprocess_text(resume_text)
@@ -50,19 +49,18 @@ def calculate_match(resume_text, job_description):
     matched_keywords = list(job_keywords.intersection(resume_keywords))
     missing_keywords = list(job_keywords - resume_keywords)
 
-    # Generate suggestions using OpenAI
-    prompt = f"""
-    Analyze the resume against the following job description:
-    Job Description: {job_description}
-    Resume: {resume_text}
-    
-    Provide improvements for missing keywords, highlight strengths, and give industry-level tips.
-    """
-    suggestions = get_openai_response(prompt)
+    # Predefined suggestions for projects, certifications, and achievements
+    suggestions = []
+    if not re.search(r"project|projects|portfolio", resume_cleaned):
+        suggestions.append("✨ Consider adding projects to showcase your hands-on experience.")
+    if not re.search(r"certification|certifications|credential|credentials", resume_cleaned):
+        suggestions.append("💡 Adding relevant certifications can boost your resume's credibility.")
+    if not re.search(r"(\d+%|\$\d+|increased|reduced|achieved|grew|saved)", resume_cleaned):
+        suggestions.append("🔍 Include quantifiable achievements to make your resume more impactful.")
 
     return {
         "similarity_score": round(similarity_score, 2),
         "matched_keywords": matched_keywords,
         "missing_keywords": missing_keywords,
-        "suggestion": str(suggestions) if suggestions else "No suggestions available"
+        "suggestion": "\n".join(suggestions) if suggestions else "No suggestions available"
     }

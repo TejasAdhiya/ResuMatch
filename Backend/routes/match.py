@@ -15,14 +15,14 @@ async def upload_resume(
     try:
         contents = await file.read()
         resume_text = extract_resume_text(contents, file.filename)
-        result = calculate_match(resume_text, job_description)
+        
+        # Await the calculate_match function and ensure proper handling of the result
+        result = await calculate_match(resume_text, job_description)
 
-        # Ensure result contains all required fields
         response = {
-            "similarity_score": result.get("similarity_score", 0.0),
-            "matched_keywords": result.get("matched_keywords", []),
-            "missing_keywords": result.get("missing_keywords", []),
-            "suggestion": result.get("suggestion", ""),
+            "similarity_score": result["similarity_score"],
+            "matched_keywords": result["matched_keywords"],
+            "missing_keywords": result["missing_keywords"],
         }
 
         return response
