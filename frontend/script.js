@@ -1,4 +1,4 @@
-// File upload preview with beautiful display
+// File upload preview with detailed display
 document.getElementById('resume').addEventListener('change', function(e) {
   const file = e.target.files[0];
   const preview = document.getElementById('filePreview');
@@ -11,7 +11,7 @@ document.getElementById('resume').addEventListener('change', function(e) {
   }
 });
 
-// Main form submission with auto-scroll to results
+// Main form submission with enhanced error handling and smooth interactions
 document.getElementById("uploadForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   
@@ -41,10 +41,13 @@ document.getElementById("uploadForm").addEventListener("submit", async function(
       body: formData,
     });
 
-    if (!response.ok) throw new Error("Analysis failed. Please try again.");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Analysis failed. Please try again.");
+    }
     const data = await response.json();
 
-    // Display beautiful results with perfect formatting
+    // Display the results beautifully
     resultDiv.innerHTML = `
       <h2 id="resultsHeader">Analysis Results</h2>
       
@@ -82,7 +85,7 @@ document.getElementById("uploadForm").addEventListener("submit", async function(
       </div>
     `;
 
-    // Celebrate matches with gold-themed confetti
+    // Add celebratory confetti if match score is high
     if (data.similarity_score >= 20) {
       confetti({
         particleCount: Math.min(100, 50 + (data.similarity_score * 3)),
@@ -93,14 +96,14 @@ document.getElementById("uploadForm").addEventListener("submit", async function(
       });
     }
 
-    // Show results
+    // Show the results
     resultDiv.style.display = "block";
     
-    // Smooth scroll to results after short delay
+    // Smooth scroll to the results section
     setTimeout(() => {
       const resultsHeader = document.getElementById("resultsHeader");
       const headerPosition = resultsHeader.getBoundingClientRect().top + window.pageYOffset;
-      const scrollStopPosition = headerPosition - 20; // 20px padding from top
+      const scrollStopPosition = headerPosition - 20; // 20px padding from the top
       
       window.scrollTo({
         top: scrollStopPosition,
@@ -111,6 +114,7 @@ document.getElementById("uploadForm").addEventListener("submit", async function(
   } catch (error) {
     alert(error.message);
   } finally {
+    // Reset the button state
     submitBtn.disabled = false;
     btnText.style.display = "inline";
     btnLoader.style.display = "none";
@@ -118,11 +122,12 @@ document.getElementById("uploadForm").addEventListener("submit", async function(
   }
 });
 
-// Format suggestions with perfect line breaks and structure
+// Utility to format suggestions into a well-structured format
 function formatSuggestions(text) {
-  if (!text) return '<p class="no-suggestions">No suggestions available</p>';
+  if (typeof text !== 'string') {
+    return '<p class="no-suggestions">No suggestions available</p>';
+  }
   
-  // Process each line with proper formatting
   const lines = text.split('\n');
   let html = '';
   let currentList = null;
@@ -166,7 +171,6 @@ function formatSuggestions(text) {
       // Skip empty lines
     }
     else {
-      // For regular text in tip section
       if (currentList === 'tip') {
         html += `<p>${line}</p>`;
       } else if (currentList) {
@@ -175,7 +179,6 @@ function formatSuggestions(text) {
     }
   });
 
-  // Close any open tags
   if (currentList === 'strength' || currentList === 'improvement') {
     html += '</ul></div>';
   } else if (currentList === 'tip') {

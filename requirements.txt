@@ -7,3 +7,4 @@ pdfminer.six
 langchain
 spacy
 scikit-learn
+nltk
