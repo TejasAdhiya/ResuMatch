@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ResuMatch - LinkedIn Jobs Fetcher</title>
   
-  <!-- Google Fonts -->
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   
-  <!-- Font Awesome -->
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
@@ -263,7 +263,48 @@
       justify-content: center;
       margin-top: 15px;
     }
-    
+    /* Enhanced Loading Animation */
+#btnContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#btnLoader {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loading-animation {
+  display: flex;
+  gap: 4px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse-loading 1.4s ease-in-out infinite both;
+}
+
+.pulse-dot:nth-child(1) { animation-delay: -0.32s; }
+.pulse-dot:nth-child(2) { animation-delay: -0.16s; }
+.pulse-dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes pulse-loading {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
     button:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
@@ -276,6 +317,10 @@
       transform: none;
       box-shadow: none;
     }
+    #submitBtn.loading {
+  background: var(--primary-dark);
+  cursor: not-allowed;
+}
     
     button i {
       margin-left: 8px;
@@ -433,8 +478,261 @@
       width: auto;
       padding: 0.8rem 1.5rem;
     }
-    
+    /* Add this CSS after the existing .error-card button styles */
+
+/* Save Job Heart Button */
+.save-job-btn {
+  background: transparent;
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  padding: 0;
+  margin: 0 0 0 10px;
+  vertical-align: middle;
+}
+
+.save-job-btn:hover {
+  border-color: var(--primary);
+  background: rgba(184, 134, 11, 0.1);
+  transform: scale(1.1);
+}
+
+.save-job-btn.saved {
+  background: #ff4757;
+  border-color: #ff4757;
+  color: white;
+}
+
+.save-job-btn.saved:hover {
+  background: #ff3742;
+  border-color: #ff3742;
+}
+
+.save-job-btn i {
+  font-size: 16px;
+  color: white;
+  margin: 0;
+}
+
+.save-job-btn.saved i {
+  color: white;
+}
+
+/* View Saved Jobs Button */
+.view-saved-jobs {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+  z-index: 1000;
+  width: auto;
+  margin: 0;
+}
+
+.view-saved-jobs:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+
+.view-saved-jobs i {
+  font-size: 14px;
+}
+
+/* Saved Jobs Modal */
+.saved-jobs-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.saved-jobs-content {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  color: var(--primary-light);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.close-modal {
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.3s ease;
+  width: auto;
+  margin: 0;
+}
+
+.close-modal:hover {
+  color: var(--primary);
+  transform: none;
+  box-shadow: none;
+}
+
+.saved-jobs-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+.saved-job-item {
+  background: rgba(184, 134, 11, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 15px 45px 15px 15px; /* Extra right padding for X button */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.saved-job-item:hover {
+  background: rgba(184, 134, 11, 0.1);
+  transform: translateY(-2px);
+}
+
+.saved-job-item h4 {
+  color: var(--primary-light);
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  padding-right: 40px; /* Add space so title doesn't overlap with X button */
+}
+
+.saved-job-item .company,
+.saved-job-item .location {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remove-saved-job {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239, 35, 60, 0.1);
+  border: 1px solid var(--error);
+  border-radius: 50%;
+  color: var(--error);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin: 0;
+}
+
+.remove-saved-job:hover {
+  background: rgba(239, 35, 60, 0.2);
+  border-color: #ff3742;
+  color: #ff3742;
+  transform: scale(1.1);
+  box-shadow: none;
+}
+
+.remove-saved-job i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px; /* Adjust this if necessary */
+  line-height: 0;
+  width: auto;
+  height: auto;
+  margin: 0; /* Removes any potential spacing issues */
+}
+
+
+.no-saved-jobs {
+  text-align: center;
+  color: var(--text-light);
+  padding: 40px 20px;
+}
+
+.no-saved-jobs i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: var(--border);
+}
+
+@media (max-width: 768px) {
+  .view-saved-jobs {
+    top: 10px;
+    right: 10px;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+  
+  .saved-jobs-content {
+    margin: 20px;
+    padding: 20px;
+    max-height: 90vh;
+  }
+  
+  .save-job-btn {
+    width: 35px;
+    height: 35px;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .save-job-btn i {
+    font-size: 14px;
+  }
+}
     @media (max-width: 768px) {
+ 
       .container {
         padding: 100px 15px 30px;
       }
@@ -463,7 +761,12 @@
   </style>
 </head>
 <body>
-  <!-- Logo Container with Glitter Effect -->
+  
+<button class="view-saved-jobs" id="viewSavedJobsBtn">
+  <i class="fas fa-heart"></i>
+  Saved Jobs
+</button>
+  
   <div class="logo-container" id="logoContainer">
     <img src="logo.png" alt="ResuMatch Logo" class="logo-img">
   </div>
@@ -473,7 +776,136 @@
       <h1>ResuMatch</h1>
       <p class="tagline">AI-powered resume optimization for your dream career</p>
     </header>
-    
+    <script>
+      // Enhanced localStorage with fallback
+function getSavedJobs() {
+  try {
+    const jobs = localStorage.getItem('savedJobs');
+    return jobs ? JSON.parse(jobs) : [];
+  } catch (e) {
+    console.warn('localStorage not available, using session storage');
+    try {
+      const jobs = sessionStorage.getItem('savedJobs');
+      return jobs ? JSON.parse(jobs) : [];
+    } catch (e2) {
+      console.warn('No storage available, using memory only');
+      return [];
+    }
+  }
+}
+
+function setSavedJobs(jobs) {
+  try {
+    localStorage.setItem('savedJobs', JSON.stringify(jobs));
+  } catch (e) {
+    console.warn('localStorage not available, using session storage');
+    try {
+      sessionStorage.setItem('savedJobs', JSON.stringify(jobs));
+    } catch (e2) {
+      console.warn('No storage available, data will be lost on refresh');
+    }
+  }
+}
+      // Add these variables at the top of your script section
+let savedJobs = getSavedJobs();
+
+// Add these functions before your existing form submit handler
+
+function updateSavedJobsCount() {
+  const countElement = document.getElementById('savedJobsCount');
+  if (countElement) {
+    countElement.textContent = savedJobs.length;
+  }
+}
+
+function saveJob(jobData) {
+  const jobExists = savedJobs.find(job => job.title === jobData.title && job.company === jobData.company);
+  if (!jobExists) {
+    savedJobs.push(jobData);
+    setSavedJobs(savedJobs);
+    updateSavedJobsCount();
+    return true;
+  }
+  return false;
+}
+
+function removeSavedJob(jobTitle, jobCompany) {
+  savedJobs = savedJobs.filter(job => !(job.title === jobTitle && job.company === jobCompany));
+  setSavedJobs(savedJobs);
+  updateSavedJobsCount();
+  displaySavedJobs();
+}
+
+function isJobSaved(jobTitle, jobCompany) {
+  return savedJobs.some(job => job.title === jobTitle && job.company === jobCompany);
+}
+
+function displaySavedJobs() {
+  const savedJobsList = document.getElementById('savedJobsList');
+  
+  if (savedJobs.length === 0) {
+    savedJobsList.innerHTML = `
+      <div class="no-saved-jobs">
+        <i class="fas fa-heart-broken"></i>
+        <h3>No Saved Jobs</h3>
+        <p>You haven't saved any jobs yet. Save jobs by clicking the heart icon on job cards.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  savedJobsList.innerHTML = savedJobs.map(job => `
+    <div class="saved-job-item" onclick="window.open('${job.url}', '_blank')">
+      <button class="remove-saved-job" onclick="event.stopPropagation(); removeSavedJob('${job.title}', '${job.company}')">
+        <i class="fas fa-times"></i>
+      </button>
+      <h4>${job.title}</h4>
+      <p class="company"><i class="fas fa-building"></i> ${job.company}</p>
+      <p class="location"><i class="fas fa-map-marker-alt"></i> ${job.location}</p>
+    </div>
+  `).join('');
+}
+
+// Add event listeners for saved jobs modal
+document.getElementById('viewSavedJobsBtn').addEventListener('click', function() {
+  displaySavedJobs();
+  document.getElementById('savedJobsModal').style.display = 'flex';
+});
+
+// Close modal when clicking the close button
+document.addEventListener('click', function(e) {
+  if (e.target.closest('.close-modal')) {
+    document.getElementById('savedJobsModal').style.display = 'none';
+  }
+});
+
+document.getElementById('savedJobsModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.style.display = 'none';
+  }
+});
+
+// Initialize saved jobs count on page load
+// Initialize saved jobs count on page load
+// Initialize saved jobs count on page load
+document.addEventListener('DOMContentLoaded', () => {
+  savedJobs = getSavedJobs(); // Reload saved jobs from storage
+  updateSavedJobsCount();
+});
+
+// Also update when window loads completely
+window.addEventListener('load', () => {
+  savedJobs = getSavedJobs();
+  updateSavedJobsCount();
+});
+// Also update count when page becomes visible
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    savedJobs = getSavedJobs();
+    updateSavedJobsCount();
+  }
+});
+    </script>
     <div class="card">
       <form id="jobFetchForm">
         <div class="form-group">
@@ -494,16 +926,25 @@
         <div class="form-group">
           <label for="state">Select State</label>
           <select id="state" name="state" required>
-            <option value="" disabled selected>Your dream job state</option>
-            <!-- State options will be added here -->
+            <option value="" disabled selected>E.g Maharashtra</option>
+            
           </select>
         </div>
         
         <button type="submit" id="submitBtn">
-          <span id="btnText">Fetch LinkedIn Jobs</span>
-          <i class="fas fa-search"></i>
-          <span id="btnLoader" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Searching Jobs...</span>
-        </button>
+  <span id="btnContent">
+    <span id="btnText">Fetch LinkedIn Jobs</span>
+    <i id="btnIcon" class="fas fa-search"></i>
+  </span>
+  <span id="btnLoader" style="display:none;">
+    <div class="loading-animation">
+      <div class="pulse-dot"></div>
+      <div class="pulse-dot"></div>
+      <div class="pulse-dot"></div>
+    </div>
+    <span></span>
+  </span>
+</button>
       </form>
     </div>
     
@@ -513,7 +954,7 @@
     </div>
     
     <div id="result" class="card" style="display: none;">
-      <!-- Results will be populated here by JavaScript -->
+      
     </div>
   </div>
 
@@ -583,9 +1024,12 @@ document.getElementById('jobFetchForm').addEventListener('submit', async functio
   const result = document.getElementById('result');
   
   // Show loading state
-  submitBtn.disabled = true;
-  btnText.style.display = 'none';
-  btnLoader.style.display = 'flex';
+// Show loading state
+// Show loading state
+submitBtn.disabled = true;
+submitBtn.classList.add('loading');
+document.getElementById('btnContent').style.display = 'none';
+btnLoader.style.display = 'flex';
   loading.style.display = 'block';
   result.style.display = 'none';
   
@@ -614,20 +1058,29 @@ document.getElementById('jobFetchForm').addEventListener('submit', async functio
     // Generate job cards HTML
     result.innerHTML = `
   <div class="results-header">
-    <h2><i class="fas fa-briefcase"></i> Top 5 Most Suitable Jobs For You</h2>
+    <h2><i class="fas fa-briefcase"></i> Top Most Suitable Jobs For You</h2>
     <p>Based on your resume and ${data.state} location</p>
   </div>
   <div class="job-cards">
     ${data.jobs.map(job => `
-      <div class="job-card" onclick="window.open('${job.url}', '_blank')">
-        <h3>${job.title}</h3>
-        <p class="company"><i class="fas fa-building"></i> ${job.company}</p>
-        <p class="location"><i class="fas fa-map-marker-alt"></i> ${job.location}</p>
-        <div class="job-footer">
-          <span class="apply-btn">View on LinkedIn <i class="fas fa-external-link-alt"></i></span>
-        </div>
-      </div>
-    `).join('')}
+  <div class="job-card" onclick="window.open('${job.url}', '_blank')">
+    <button class="save-job-btn ${isJobSaved(job.title, job.company) ? 'saved' : ''}" 
+            onclick="event.stopPropagation(); toggleSaveJob(this, {
+              title: '${job.title.replace(/'/g, "\\'")}',
+              company: '${job.company.replace(/'/g, "\\'")}',
+              location: '${job.location.replace(/'/g, "\\'")}',
+              url: '${job.url}'
+            })">
+      <i class="fas fa-heart"></i>
+    </button>
+    <h3>${job.title}</h3>
+    <p class="company"><i class="fas fa-building"></i> ${job.company}</p>
+    <p class="location"><i class="fas fa-map-marker-alt"></i> ${job.location}</p>
+    <div class="job-footer">
+      <span class="apply-btn">View on LinkedIn <i class="fas fa-external-link-alt"></i></span>
+    </div>
+  </div>
+`).join('')}
 
 `;
     
@@ -645,12 +1098,24 @@ document.getElementById('jobFetchForm').addEventListener('submit', async functio
     loading.style.display = 'none';
     result.style.display = 'block';
     submitBtn.disabled = false;
-    btnText.style.display = 'flex';
-    btnLoader.style.display = 'none';
+submitBtn.classList.remove('loading');
+document.getElementById('btnContent').style.display = 'flex';
+btnLoader.style.display = 'none';
     result.scrollIntoView({ behavior: 'smooth' });
   }
 });
-
+    function toggleSaveJob(button, jobData) {
+  if (button.classList.contains('saved')) {
+    // Remove from saved jobs
+    removeSavedJob(jobData.title, jobData.company);
+    button.classList.remove('saved');
+  } else {
+    // Add to saved jobs
+    if (saveJob(jobData)) {
+      button.classList.add('saved');
+    }
+  }
+}
     // Start glitter effect when page loads
     window.addEventListener('load', () => {
       startGlitterEffect();
@@ -705,5 +1170,19 @@ document.getElementById('jobFetchForm').addEventListener('submit', async functio
     });
 
   </script>
+  
+<div id="savedJobsModal" class="saved-jobs-modal">
+  <div class="saved-jobs-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-bookmark"></i> Your Saved Jobs</h2>
+      <button class="close-modal">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="savedJobsList" class="saved-jobs-grid">
+      
+    </div>
+  </div>
+</div>
 </body>
 </html>
