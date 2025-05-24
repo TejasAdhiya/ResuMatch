@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResuMatch - AI-Powered Career Enhancement</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #DAA520;
+      --primary-dark: #B8860B;
+      --primary-light: #FFD700;
+      --primary-glow: rgba(218, 165, 32, 0.1);
+      --bg: #0F0F0F;
+      --bg-secondary: #1A1A1A;
+      --text: #FFFFFF;
+      --text-secondary: #E8E8E8;
+      --text-muted: #888888;
+      --shadow: rgba(0, 0, 0, 0.5);
+      --gradient: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+      --welcome-gradient: linear-gradient(135deg, #FF6B35, #FFD700, #FF8E53);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 20% 80%, var(--primary-glow) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 50%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem 2rem 3rem 2rem;
+      position: relative;
+      z-index: 2;
+      transform: translateY(-40px);
+    }
+
+    /* Logo Section */
+    .logo-section {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .logo-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo-img {
+      width: 180px;
+      height: auto;
+      filter: drop-shadow(0 0 20px var(--primary-glow));
+      animation: logoGlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 20px var(--primary-glow)); }
+      to { filter: drop-shadow(0 0 35px var(--primary-light)); }
+    }
+
+    .tagline {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      animation: slideUp 1s ease-out 0.5s forwards;
+    }
+
+    /* Main Content */
+    .main-content {
+      text-align: center;
+      max-width: 800px;
+      width: 100%;
+      margin-bottom: 3rem;
+    }
+
+    .welcome-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: var(--welcome-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: slideUp 1s ease-out 0.8s forwards;
+      line-height: 1.2;
+      text-shadow: 0 0 30px rgba(255, 107, 53, 0.3);
+    }
+
+    .description {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.3rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: slideUp 1s ease-out 1.1s forwards;
+    }
+
+    /* Options Section */
+    .options-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      opacity: 0;
+      animation: slideUp 1s ease-out 1.4s forwards;
+    }
+
+    .option-card {
+      flex: 1;
+      min-width: 280px;
+      padding: 2rem 2.5rem;
+      background: var(--bg-secondary);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+
+    .option-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient);
+      transition: left 0.4s ease;
+      z-index: -1;
+    }
+
+    .option-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px var(--primary-glow);
+      color: var(--bg);
+    }
+
+    .option-card:hover::before {
+      left: 0;
+    }
+
+    .option-card .icon {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .option-card:hover .icon {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+
+    /* Animations */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Particle Background */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      background: var(--primary-light);
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    /* Transition Effect */
+    body.fade-out {
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .welcome-title {
+        font-size: 2.5rem;
+      }
+      
+      .description {
+        font-size: 1.1rem;
+      }
+      
+      .options-section {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      
+      .option-card {
+        min-width: 100%;
+        padding: 1.5rem 2rem;
+      }
+      
+      .logo-img {
+        width: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .welcome-title {
+        font-size: 2rem;
+      }
+      
+      .description {
+        font-size: 1rem;
+      }
+      
+      .tagline {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Particle Background -->
+  <div class="particles" id="particles"></div>
+
+  <div class="container">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <div class="logo-container">
+        <img src="logo.png" alt="ResuMatch AI Logo" class="logo-img">
+      </div>
+      <p class="tagline">Intelligent Career Advancement Through AI-Powered Resume Analysis</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <h1 class="welcome-title">Welcome to ResuMatch</h1>
+      <p class="description">Transform your career journey with our advanced AI technology that analyzes, optimizes, and matches your resume to unlock your dream job opportunities.</p>
+    </div>
+
+    <!-- Options Section -->
+    <div class="options-section">
+      <a href="index.html" class="option-card" onclick="redirectWithEffect(event)">
+        <i class="fas fa-file-alt icon"></i>
+        Analyze My Resume
+      </a>
+      <a href="linkedin.html" class="option-card" onclick="redirectWithEffect(event)">
+        <i class="fab fa-linkedin icon"></i>
+        Find LinkedIn Jobs
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = window.innerWidth < 768 ? 20 : 50;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        particle.style.animationDelay = `${Math.random() * 6}s`;
+        particle.style.animationDuration = `${6 + Math.random() * 4}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Redirect with fade effect
+    function redirectWithEffect(event) {
+      event.preventDefault();
+      document.body.classList.add('fade-out');
+      setTimeout(() => {
+        window.location.href = event.target.closest('a').href;
+      }, 800);
+    }
+
+    // Initialize particles when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+    });
+
+    // Recreate particles on window resize
+    window.addEventListener('resize', () => {
+      const particlesContainer = document.getElementById('particles');
+      particlesContainer.innerHTML = '';
+      createParticles();
+    });
+  </script>
+</body>
+</html>

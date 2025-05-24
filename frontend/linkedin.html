@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResuMatch - LinkedIn Jobs Fetcher</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: darkgoldenrod;
+      --primary-dark: #b8860b;
+      --primary-light: #ffd700;
+      --accent: #ffc125;
+      --bg: #1a1a1a;
+      --card: #2d2d2d;
+      --text: #f0f0f0;
+      --text-light: #b0b0b0;
+      --border: #444444;
+      --success: #4cc9f0;
+      --error: #ef233c;
+      --matched-color: #50C878;
+      --missing-color: #FF6B6B;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.2;
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    
+    /* Logo Container with Glitter Effect */
+    .logo-container {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      z-index: 100;
+      cursor: pointer;
+    }
+    
+    .logo-img {
+      height: 200px;
+      width: auto;
+      position: relative;
+      z-index: 101;
+      transition: all 0.5s ease;
+    }
+    
+    /* Glitter Particle Elements */
+    .glitter-particle {
+      position: absolute;
+      background: var(--primary-light);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99;
+      opacity: 0;
+    }
+    
+    /* Glitter Animation */
+    @keyframes glitterFall {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--glitter-x, 100px), var(--glitter-y, 500px)) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Logo Hover Effect */
+    .logo-container:hover .logo-img {
+      filter: drop-shadow(0 0 10px var(--primary-light));
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-top: 60px;
+    }
+    
+    h1 {
+      color: var(--primary-light);
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+    }
+    
+    .tagline {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 1px solid var(--border);
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 1.1rem;
+    }
+    
+    .file-upload {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    
+    .file-upload input {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      background: rgba(184, 134, 11, 0.05);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .file-upload-label:hover {
+      border-color: var(--primary);
+      background: rgba(184, 134, 11, 0.1);
+    }
+    
+    .file-upload-label i {
+      font-size: 24px;
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    /* Location Selection Styles */
+    .location-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    
+    .country-display {
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #3a3a3a;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+    }
+    
+    .country-display i {
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    select {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #3a3a3a;
+      color: var(--text);
+      cursor: pointer;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2);
+    }
+    
+    select option {
+      background: #3a3a3a;
+      color: var(--text);
+      padding: 10px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #3a3a3a;
+      color: var(--text);
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2);
+    }
+    
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(184, 134, 11, 0.3);
+    }
+    
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    button i {
+      margin-left: 8px;
+    }
+    
+    .file-preview {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+    
+    .file-preview i {
+      margin-right: 8px;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(184, 134, 11, 0.1);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ===== NEW RESULTS SECTION ===== */
+    .results-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .results-header h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--primary-light);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .results-header p {
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+
+    .job-cards {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .job-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .job-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+/*
+    .job-match {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1));
+      padding: 0.5rem 1rem;
+      border-bottom-left-radius: 12px;
+    }
+*/
+    .job-match span {
+      font-weight: 600;
+      font-size: 0.9rem;
+      position: relative;
+    }
+
+    .job-match::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: var(--match);
+      height: 3px;
+      background: var(--matched-color);
+    }
+
+    .job-card h3 {
+      color: var(--primary-light);
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+    }
+
+    .job-card .company,
+    .job-card .location {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .job-footer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .apply-btn {
+      color: var(--primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .job-card:hover .apply-btn {
+      color: var(--primary-light);
+    }
+
+    .error-card {
+      text-align: center;
+      padding: 2rem;
+      color: var(--error);
+    }
+
+    .error-card i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-card button {
+      margin-top: 1.5rem;
+      background: var(--error);
+      width: auto;
+      padding: 0.8rem 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 100px 15px 30px;
+      }
+      
+      .logo-img {
+        height: 150px;
+      }
+      
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .card {
+        padding: 25px;
+      }
+      
+      .location-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .job-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo Container with Glitter Effect -->
+  <div class="logo-container" id="logoContainer">
+    <img src="logo.png" alt="ResuMatch Logo" class="logo-img">
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>ResuMatch</h1>
+      <p class="tagline">AI-powered resume optimization for your dream career</p>
+    </header>
+    
+    <div class="card">
+      <form id="jobFetchForm">
+        <div class="form-group">
+          <label for="resume">Upload Your Resume</label>
+          <div class="file-upload">
+            <input type="file" id="resume" name="file" accept=".pdf,.docx" required>
+            <label for="resume" class="file-upload-label">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>Choose PDF or DOCX file</span>
+            </label>
+          </div>
+          <div id="filePreview" class="file-preview" style="display: none;">
+            <i class="fas fa-file-alt"></i>
+            <span></span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="state">Select State</label>
+          <select id="state" name="state" required>
+            <option value="" disabled selected>Your dream job state</option>
+            <!-- State options will be added here -->
+          </select>
+        </div>
+        
+        <button type="submit" id="submitBtn">
+          <span id="btnText">Fetch LinkedIn Jobs</span>
+          <i class="fas fa-search"></i>
+          <span id="btnLoader" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Searching Jobs...</span>
+        </button>
+      </form>
+    </div>
+    
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Searching for relevant jobs...</p>
+    </div>
+    
+    <div id="result" class="card" style="display: none;">
+      <!-- Results will be populated here by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Glitter Effect Functionality
+    const logoContainer = document.getElementById('logoContainer');
+    const colors = ['#FFD700', '#FFC125', '#FFDF00', '#FFEC8B', '#FFFACD'];
+    
+    function createGlitterParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'glitter-particle';
+      
+      // Random properties for each particle
+      const size = Math.random() * 8 + 2;
+      const duration = Math.random() * 3 + 2;
+      const delay = Math.random() * 2;
+      
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${Math.random() * 100}px`;
+      particle.style.top = `${Math.random() * 100}px`;
+      particle.style.animation = `glitterFall ${duration}s linear ${delay}s forwards`;
+      particle.style.setProperty('--glitter-x', `${(Math.random() - 0.5) * 300}px`);
+      particle.style.setProperty('--glitter-y', `${Math.random() * 500}px`);
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      
+      logoContainer.appendChild(particle);
+      
+      // Remove particle after animation completes
+      setTimeout(() => {
+        particle.remove();
+      }, (duration + delay) * 1000);
+    }
+    
+    // Continuous glitter effect
+    function startGlitterEffect() {
+      createGlitterParticle();
+      if (Math.random() > 0.3) {
+        setTimeout(createGlitterParticle, 100);
+      }
+      setTimeout(startGlitterEffect, 300);
+    }
+    
+    // File upload preview functionality
+    document.getElementById('resume').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const preview = document.getElementById('filePreview');
+      const label = document.querySelector('.file-upload-label span');
+      
+      if (file) {
+        preview.style.display = 'flex';
+        preview.querySelector('span').textContent = file.name;
+        label.textContent = 'File selected: ' + file.name;
+      } else {
+        preview.style.display = 'none';
+        label.textContent = 'Choose PDF or DOCX file';
+      }
+    });
+
+document.getElementById('jobFetchForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const submitBtn = document.getElementById('submitBtn');
+  const btnText = document.getElementById('btnText');
+  const btnLoader = document.getElementById('btnLoader');
+  const loading = document.getElementById('loading');
+  const result = document.getElementById('result');
+  
+  // Show loading state
+  submitBtn.disabled = true;
+  btnText.style.display = 'none';
+  btnLoader.style.display = 'flex';
+  loading.style.display = 'block';
+  result.style.display = 'none';
+  
+  try {
+    const formData = new FormData();
+    formData.append('file', document.getElementById('resume').files[0]);
+    formData.append('state', document.getElementById('state').value);
+    
+    const response = await fetch('http://127.0.0.1:5000/api/fetch-linkedin-jobs', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) throw new Error('Failed to fetch jobs');
+    
+    const data = await response.json();
+    
+    // DEBUG: Log the full API response
+    console.log("API Response:", data);
+    
+    // Check if jobs array exists and has items
+    if (!data.jobs || data.jobs.length === 0) {
+      throw new Error('No jobs found matching your profile');
+    }
+    
+    // Generate job cards HTML
+    result.innerHTML = `
+  <div class="results-header">
+    <h2><i class="fas fa-briefcase"></i> Top 5 Most Suitable Jobs For You</h2>
+    <p>Based on your resume and ${data.state} location</p>
+  </div>
+  <div class="job-cards">
+    ${data.jobs.map(job => `
+      <div class="job-card" onclick="window.open('${job.url}', '_blank')">
+        <h3>${job.title}</h3>
+        <p class="company"><i class="fas fa-building"></i> ${job.company}</p>
+        <p class="location"><i class="fas fa-map-marker-alt"></i> ${job.location}</p>
+        <div class="job-footer">
+          <span class="apply-btn">View on LinkedIn <i class="fas fa-external-link-alt"></i></span>
+        </div>
+      </div>
+    `).join('')}
+
+`;
+    
+  } catch (error) {
+    console.error("Error:", error);
+    result.innerHTML = `
+      <div class="error-card">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Error Fetching Jobs</h3>
+        <p>${error.message}</p>
+        <button onclick="location.reload()">Try Again</button>
+      </div>
+    `;
+  } finally {
+    loading.style.display = 'none';
+    result.style.display = 'block';
+    submitBtn.disabled = false;
+    btnText.style.display = 'flex';
+    btnLoader.style.display = 'none';
+    result.scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+    // Start glitter effect when page loads
+    window.addEventListener('load', () => {
+      startGlitterEffect();
+      
+      // Enhanced effect on hover
+      logoContainer.addEventListener('mouseenter', () => {
+        for (let i = 0; i < 15; i++) {
+          setTimeout(createGlitterParticle, i * 50);
+        }
+      });
+
+      // Add state options dynamically (example - replace with your actual states)
+      const states = [
+       "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Delhi",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal"
+      ];
+      
+      const stateSelect = document.getElementById('state');
+      states.forEach(state => {
+        const option = document.createElement('option');
+        option.value = state;
+        option.textContent = state;
+        stateSelect.appendChild(option);
+      });
+    });
+
+  </script>
+</body>
+</html>
