@@ -9,7 +9,7 @@ async def get_openai_response(prompt, model="gpt-3.5-turbo", temperature=0.3):
     """Generic OpenAI request handler"""
     try:
         response = await openai.ChatCompletion.acreate(
-            model=model,
+            model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             temperature=temperature
         )

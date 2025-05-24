@@ -1,9 +1,13 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
 import re
+
+# Initialize the transformer model for semantic similarity
+semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Predefined set of industry-level keywords
 INDUSTRY_KEYWORDS = {
@@ -22,10 +26,10 @@ def preprocess_text(text):
     """
     Preprocess text by removing stopwords, punctuation, and lemmatizing words.
     """
-    text = text.lower()  # Convert to lowercase
-    text = re.sub(r'\d+', '', text)  # Remove numbers
-    text = text.translate(str.maketrans('', '', string.punctuation))  # Remove punctuation
-    words = word_tokenize(text)  # Tokenize text
+    text = text.lower()
+    text = re.sub(r'\d+', '', text)
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    words = word_tokenize(text)
     filtered_words = [word for word in words if word not in STOPWORDS and word not in PUNCTUATION]
     return " ".join(filtered_words)
 
@@ -37,19 +41,26 @@ async def calculate_match(resume_text, job_description):
     resume_cleaned = preprocess_text(resume_text)
     job_cleaned = preprocess_text(job_description)
 
-    # TF-IDF vectorization
+    # Calculate semantic similarity
+    resume_embedding = semantic_model.encode(resume_text)
+    job_embedding = semantic_model.encode(job_description)
+    semantic_similarity_score = cosine_similarity([resume_embedding], [job_embedding])[0][0] * 100
+
+    # Calculate keyword-based match score
     vectorizer = TfidfVectorizer()
     vectors = vectorizer.fit_transform([resume_cleaned, job_cleaned])
-    similarity_score = cosine_similarity(vectors[0], vectors[1])[0][0] * 100
+    keyword_similarity_score = cosine_similarity(vectors[0], vectors[1])[0][0] * 100
+
+    # Combine the scores
+    final_score = (0.8 * semantic_similarity_score) + (0.2 * keyword_similarity_score)
 
     # Extract keywords
     job_keywords = set(job_cleaned.split()) & INDUSTRY_KEYWORDS
     resume_keywords = set(resume_cleaned.split()) & INDUSTRY_KEYWORDS
-
     matched_keywords = list(job_keywords.intersection(resume_keywords))
     missing_keywords = list(job_keywords - resume_keywords)
 
-    # Predefined suggestions for projects, certifications, and achievements
+    # Predefined suggestions
     suggestions = []
     if not re.search(r"project|projects|portfolio", resume_cleaned):
         suggestions.append("✨ Consider adding projects to showcase your hands-on experience.")
@@ -59,7 +70,7 @@ async def calculate_match(resume_text, job_description):
         suggestions.append("🔍 Include quantifiable achievements to make your resume more impactful.")
 
     return {
-        "similarity_score": round(similarity_score, 2),
+        "similarity_score": round(final_score, 2),
         "matched_keywords": matched_keywords,
         "missing_keywords": missing_keywords,
         "suggestion": "\n".join(suggestions) if suggestions else "No suggestions available"
