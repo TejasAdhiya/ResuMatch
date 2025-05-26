@@ -3,16 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResuMatch - AI Resume Optimizer</title>
-  
-  <!-- Google Fonts -->
+  <title>ResuMatch - AI Recruitment Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-  
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <style>
     :root {
       --primary: darkgoldenrod;
@@ -59,7 +54,6 @@
       overflow-x: hidden;
     }
     
-    /* Logo Container with Glitter Effect */
     .logo-container {
       position: absolute;
       top: 4px;
@@ -76,7 +70,6 @@
       transition: all 0.5s ease;
     }
     
-    /* Glitter Particle Elements */
     .glitter-particle {
       position: absolute;
       background: var(--primary-light);
@@ -86,7 +79,6 @@
       opacity: 0;
     }
     
-    /* Glitter Animation */
     @keyframes glitterFall {
       0% {
         transform: translate(0, 0) rotate(0deg);
@@ -98,7 +90,6 @@
       }
     }
     
-    /* Logo Hover Effect */
     .logo-container:hover .logo-img {
       filter: drop-shadow(0 0 10px var(--primary-light));
     }
@@ -125,7 +116,7 @@
     
     .tagline {
       font-size: 1.2rem;
-      color: var(--text-light);
+      color: var(--text);
       max-width: 600px;
       margin: 0 auto;
     }
@@ -190,7 +181,6 @@
       color: var(--primary);
     }
     
-    /* Textarea Container */
     .textarea-container {
       height: 180px;
       overflow: hidden;
@@ -366,7 +356,6 @@
       100% { transform: rotate(360deg); }
     }
     
-    /* Custom Scrollbar */
     #jobDescription::-webkit-scrollbar {
       width: 8px;
     }
@@ -404,7 +393,6 @@
   </style>
 </head>
 <body>
-  <!-- Logo Container with Glitter Effect -->
   <div class="logo-container" id="logoContainer">
     <img src="logo.png" alt="ResuMatch Logo" class="logo-img">
   </div>
@@ -412,13 +400,13 @@
   <div class="container">
     <header>
       <h1>ResuMatch</h1>
-      <p class="tagline">AI-powered resume optimization for your dream career</p>
+      <p class="tagline">AI-powered recruitment optimization for your hiring needs</p>
     </header>
     
     <div class="card">
       <form id="uploadForm">
         <div class="form-group">
-          <label for="resume">Upload Your Resume</label>
+          <label for="resume">Upload Candidate's Resume</label>
           <div class="file-upload">
             <input type="file" id="resume" name="file" accept=".pdf,.docx" required>
             <label for="resume" class="file-upload-label">
@@ -435,7 +423,7 @@
         <div class="form-group">
           <label for="jobDescription">Paste Job Description</label>
           <div class="textarea-container">
-            <textarea id="jobDescription" name="job_description" placeholder="Enter the job description you're applying for..." required></textarea>
+            <textarea id="jobDescription" name="job_description" placeholder="Enter the job description you're hiring for..." required></textarea>
           </div>
         </div>
         
@@ -448,7 +436,7 @@
     
     <div id="loading" class="loading">
       <div class="spinner"></div>
-      <p>Analyzing your resume...</p>
+      <p>Analyzing resume...</p>
     </div>
     
     <div id="result" class="card">
@@ -456,12 +444,9 @@
     </div>
   </div>
 
-  <!-- Confetti library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   
-  <!-- Glitter Effect Script -->
   <script>
-    // Glitter Effect Functionality
     const logoContainer = document.getElementById('logoContainer');
     const colors = ['#FFD700', '#FFC125', '#FFDF00', '#FFEC8B', '#FFFACD'];
     
@@ -469,7 +454,6 @@
       const particle = document.createElement('div');
       particle.className = 'glitter-particle';
       
-      // Random properties for each particle
       const size = Math.random() * 8 + 2;
       const duration = Math.random() * 3 + 2;
       const delay = Math.random() * 2;
@@ -485,13 +469,11 @@
       
       logoContainer.appendChild(particle);
       
-      // Remove particle after animation completes
       setTimeout(() => {
         particle.remove();
       }, (duration + delay) * 1000);
     }
     
-    // Continuous glitter effect
     function startGlitterEffect() {
       createGlitterParticle();
       if (Math.random() > 0.3) {
@@ -500,11 +482,9 @@
       setTimeout(startGlitterEffect, 300);
     }
     
-    // Start effect when page loads
     window.addEventListener('load', () => {
       startGlitterEffect();
       
-      // Enhanced effect on hover
       logoContainer.addEventListener('mouseenter', () => {
         for (let i = 0; i < 15; i++) {
           setTimeout(createGlitterParticle, i * 50);
@@ -512,9 +492,5 @@
       });
     });
   </script>
-  
-  <!-- Your existing scripts -->
-  <script src="script.js"></script>
-  <script src="typewriter.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Job Seeker Options - ResuMatch</title>
+  <title>Job Recruiter Options - ResuMatch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
@@ -194,17 +194,17 @@
       color: var(--bg);
     }
 
-    /* LinkedIn specific styling */
-    .option-card.linkedin .icon {
-      color: var(--linkedin-blue);
+    /* Recruiter specific styling */
+    .option-card.recruiter .icon {
+      color: #4CAF50; /* Green color for recruiter icon */
     }
 
-    .option-card.linkedin:hover .icon {
+    .option-card.recruiter:hover .icon {
       color: white;
     }
 
-    .option-card.linkedin::before {
-      background: var(--linkedin-blue);
+    .option-card.recruiter::before {
+      background: #4CAF50; /* Green gradient for recruiter option */
     }
 
     @media (max-width: 768px) {
@@ -264,16 +264,16 @@
       <p class="tagline">Unlock Your Career Potential</p>
     </div>
     
-    <h1 class="welcome-title">Choose an option below to get started on your job-seeking journey</h1>
+    <h1 class="welcome-title">Streamline your hiring process with AI-powered recruitment solutions</h1>
     
     <div class="options-section">
-      <a href="index.html" class="option-card">
+      <a href="jr1.html" class="option-card">
         <i class="fas fa-file-alt icon"></i>
-        Analyze My Resume
+        Analyze Job Seekers' Resumes
       </a>
-      <a href="linkedin.html" class="option-card linkedin">
-        <i class="fab fa-linkedin icon"></i>
-        Fetch LinkedIn Jobs
+      <a href="jr2.html" class="option-card recruiter">
+        <i class="fas fa-search icon"></i>
+        Find Qualified Candidates
       </a>
     </div>
   </div>
