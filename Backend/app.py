@@ -4,6 +4,10 @@ import os
 from dotenv import load_dotenv
 import logging
 
+# Suppress Selenium and urllib3 warnings
+logging.getLogger('selenium').setLevel(logging.WARNING)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
+logging.getLogger('webdriver_manager').setLevel(logging.WARNING)
 # Load environment variables
 load_dotenv()
 
@@ -70,12 +74,12 @@ def fetch_linkedin_jobs_legacy():
         raw_jobs = linkedin_scraper.search_jobs(
             keywords=resume_analysis['job_keywords'],
             location=state,
-            limit=20  # Get more to filter down to best 5
+            limit=50  # Get more to filter down to best 5
         )
         
         # Step 4: Match and rank jobs using AI
         logger.info("Matching jobs with resume...")
-        matched_jobs = job_matcher.rank_jobs(resume_text, raw_jobs, top_n=5)
+        matched_jobs = job_matcher.rank_jobs(resume_text, raw_jobs, top_n=20)
         
         # Step 5: Format response
         response = {

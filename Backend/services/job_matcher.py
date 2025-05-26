@@ -8,7 +8,7 @@ class JobMatcher:
     def __init__(self, openai_service):
         self.openai_service = openai_service
     
-    def rank_jobs(self, resume_text: str, jobs: List[Dict], top_n: int = 5) -> List[Dict]:
+    def rank_jobs(self, resume_text: str, jobs: List[Dict], top_n: int = 20) -> List[Dict]:
         """
         Rank jobs based on resume match using OpenAI and simple text matching
         """
@@ -31,9 +31,8 @@ class JobMatcher:
                     job_with_score['match_score'] = match_score
                     job_with_score['match_percentage'] = f"{match_score}%"
                     
-                    # Only include jobs with decent match (above 30%)
-                    if match_score >= 30:
-                        scored_jobs.append(job_with_score)
+                    # Add this line to append the job to scored_jobs
+                    scored_jobs.append(job_with_score)
                     
                 except Exception as e:
                     logger.warning(f"Error scoring job {job.get('title', 'Unknown')}: {e}")

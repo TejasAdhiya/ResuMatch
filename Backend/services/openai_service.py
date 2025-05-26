@@ -40,7 +40,7 @@ class OpenAIService:
             """
             
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are an expert resume analyzer. Always respond with valid JSON only."},
                     {"role": "user", "content": prompt}

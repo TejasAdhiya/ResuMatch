@@ -70,7 +70,7 @@ def fetch_linkedin_jobs():
         raw_jobs = linkedin_scraper.search_jobs(
             keywords=job_keywords,
             location=state,
-            limit=20  # Get more to filter down to best 5
+            limit=50  # Get more to filter down to best 5
         )
         
         if not raw_jobs:
@@ -87,7 +87,7 @@ def fetch_linkedin_jobs():
         
         # Step 5: Match and rank jobs using AI
         logger.info("Matching jobs with resume...")
-        matched_jobs = job_matcher.rank_jobs(resume_text, raw_jobs, top_n=5)
+        matched_jobs = job_matcher.rank_jobs(resume_text, raw_jobs, top_n=20)
         
         if not matched_jobs:
             return jsonify({

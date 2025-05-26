@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResuMatch - Select Role</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #DAA520;
+      --primary-dark: #B8860B;
+      --primary-light: #FFD700;
+      --primary-glow: rgba(218, 165, 32, 0.1);
+      --bg: #0F0F0F;
+      --bg-secondary: #1A1A1A;
+      --text: #FFFFFF;
+      --text-secondary: #E8E8E8;
+      --text-muted: #888888;
+      --shadow: rgba(0, 0, 0, 0.5);
+      --gradient: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+      --welcome-gradient: linear-gradient(135deg, #FF6B35, #FFD700, #FF8E53);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: auto; /* Allow scrolling */
+    }
+
+    /* Background Animation */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at 20% 80%, var(--primary-glow) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 50%);
+animation: backgroundPulse 15s ease-in-out infinite alternate;
+z-index: 1;
+    }
+
+    @keyframes backgroundPulse {
+      0% { background-size: 100% 100%; }
+      100% { background-size: 200% 200%; }
+    }
+
+    /* Animated Gradient Overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(255, 215, 0, 0.1) 0%, rgba(184, 134, 11, 0.1) 50%, rgba(255, 107, 53, 0.1) 100%);
+      mix-blend-mode: overlay;
+      animation: gradientShift 20s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s ease-out forwards 0.5s;
+    }
+
+    /* Logo Section */
+    .logo-section {
+      text-align: center;
+      margin-bottom: 5rem; /* Increased margin */
+      position: relative;
+    }
+
+    .logo-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2.5rem; /* Increased margin */
+    }
+
+    .logo-img {
+      width: 500px; /* Significantly increased logo size */
+      height: auto;
+      filter: drop-shadow(0 0 40px var(--primary-glow));
+      animation: logoGlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 40px var(--primary-glow)); }
+      to { filter: drop-shadow(0 0 60px var(--primary-light)); }
+    }
+
+    .tagline {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.6rem; /* Increased text size */
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: 1.2px; /* Increased letter spacing */
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s ease-out forwards 0.7s;
+    }
+
+    /* Main Content */
+    .main-content {
+      text-align: center;
+      max-width: 1000px; /* Increased max width */
+      width: 100%;
+      margin-bottom: 5rem; /* Increased margin */
+    }
+
+    .welcome-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem; /* Increased text size */
+      font-weight: 700;
+      background: var(--welcome-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 2.5rem; /* Increased margin */
+      line-height: 1.2;
+      text-shadow: 0 0 50px rgba(255, 107, 53, 0.5);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s ease-out forwards 0.9s;
+    }
+
+    .description {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.8rem; /* Increased text size */
+      color: var(--text-secondary);
+      font-weight: 500;
+      line-height: 1.8; /* Increased line height */
+      margin-bottom: 5rem; /* Increased margin */
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s ease-out forwards 1.1s;
+    }
+
+    /* Options Section */
+    .options-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3rem; /* Increased gap */
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 800px; /* Increased max width */
+    }
+
+    .option-card {
+      flex: 1;
+      min-width: 320px; /* Increased min width */
+      padding: 3rem 3.5rem; /* Increased padding */
+      background: var(--bg-secondary);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 1.3rem; /* Increased text size */
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1.5px; /* Increased letter spacing */
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px var(--shadow);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s ease-out forwards var(--delay);
+    }
+
+    .option-card:nth-child(1) { --delay: 1.3s; }
+    .option-card:nth-child(2) { --delay: 1.5s; }
+
+    .option-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient);
+      transition: left 0.4s ease;
+      z-index: -1;
+    }
+
+    .option-card:hover {
+      transform: translateY(-12px); /* Increased hover effect */
+      border-color: var(--primary);
+      box-shadow: 0 25px 45px var(--primary-glow);
+      color: var(--bg);
+    }
+
+    .option-card:hover::before {
+        left: 0;
+    }
+
+    .option-card .icon {
+        margin-bottom: 1.2rem; /* Increased margin */
+        font-size: 3rem; /* Increased icon size */
+        color: var(--primary-light);
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        opacity: 0.8;
+    }
+
+    .option-card:hover .icon {
+      transform: scale(1.15); /* Increased icon hover effect */
+      opacity: 1;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 5rem; /* Increased margin */
+      padding: 2rem; /* Increased padding */
+      color: var(--text-muted);
+      font-size: 1.1rem; /* Increased text size */
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Animations */
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Particle Effect (Optional - can add if desired) */
+    /* .particle-container { ... } */
+
+  </style>
+</head>
+<body>
+  <!-- Optional Particle Effect Container -->
+  <!-- <div class="particle-container"></div> -->
+
+  <div class="container">
+    <div class="logo-section">
+      <div class="logo-container">
+        <img src="logo.png" alt="ResuMatch Logo" class="logo-img">
+      </div>
+      <p class="tagline">Unlock Your Career Potential</p>
+    </div>
+
+    <div class="main-content">
+      <h1 class="welcome-title">Select Your Role</h1>
+      <p class="description">Choose whether you are a job seeker looking to optimize your resume or a recruiter searching for talent.</p>
+    </div>
+
+    <div class="options-section">
+      <a href="job_seeker_options.html" class="option-card">
+        <i class="fas fa-user-tie icon"></i>
+        Job Seeker
+      </a>
+      <div class="option-card">
+        <i class="fas fa-briefcase icon"></i>
+        Job Recruiter
+      </div>
+    </div>
+  </div>
+
+  <!-- Removed Footer -->
+
+</body>
+</html>
