@@ -22,4 +22,3 @@ def extract_resume_text(contents: bytes, filename: str):
         return extract_text_from_docx(contents)
     else:
         raise ValueError("Unsupported file type")
-

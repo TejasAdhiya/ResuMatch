@@ -23,8 +23,269 @@
       --error: #ef233c;
       --matched-color: #50C878;
       --missing-color: #FF6B6B;
+      --gradient: linear-gradient(135deg, #daa520, #ffd700);
+      --premium-gold: #d4af37;
+      --premium-light: #f7f1e8;
+      --premium-shadow: rgba(212, 175, 55, 0.3);
+    }
+        /* Results Container */
+    .results-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      display: none; /* Hide by default, JS will set to block when needed */
     }
     
+    /* Searching Animation */
+    .searching-container {
+      text-align: center;
+      margin: 3rem 0;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out forwards;
+      display: none; /* Initially hidden */
+    }
+    
+    .searching-text {
+      font-size: 1.5rem;
+      color: var(--primary-light);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .searching-dots {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin: 0 5px;
+      animation: bounce 1.5s infinite ease-in-out;
+    }
+    
+    .searching-dots:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .searching-dots:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+    
+    /* Enhanced Candidate Cards */
+    .candidate-card {
+      background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(212, 175, 55, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 1;
+      transform: none;
+    }
+
+    .candidate-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    .candidate-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 
+        0 25px 50px rgba(212, 175, 55, 0.2),
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(212, 175, 55, 0.3);
+      border-color: rgba(212, 175, 55, 0.4);
+    }
+
+    .candidate-card:hover::before {
+      opacity: 1;
+    }
+    
+    .candidate-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    
+    .candidate-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--premium-light);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      letter-spacing: -0.5px;
+    }
+    
+    /* Enhanced Match Score */
+    .match-score {
+      background: var(--gradient);
+      color: #1a1a1a;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: 
+        0 8px 20px var(--premium-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      border: 2px solid var(--premium-gold);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .match-score::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    /* Premium Details Section */
+    .candidate-details {
+      margin-bottom: 2rem;
+      line-height: 1.8;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.02);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid var(--premium-gold);
+      position: relative;
+    }
+
+    .candidate-details::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(255, 215, 0, 0.02));
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .candidate-details p {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: #e8e8e8;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Enhanced sections in resume text */
+    .candidate-details strong,
+    .candidate-details b {
+      color: var(--premium-gold);
+      font-weight: 600;
+    }
+    
+    /* Enhanced LinkedIn Button */
+    .linkedin-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: linear-gradient(135deg, #0077b5, #005885);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 20px rgba(0, 119, 181, 0.3);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .linkedin-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .linkedin-btn:hover {
+      background: linear-gradient(135deg, #006097, #004a6b);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 30px rgba(0, 119, 181, 0.4);
+      border-color: rgba(0, 119, 181, 0.5);
+    }
+
+    .linkedin-btn:hover::before {
+      left: 100%;
+    }
+
+    .linkedin-btn i {
+      font-size: 1.2rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .candidate-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+      }
+      
+      .candidate-name {
+        font-size: 1.5rem;
+      }
+
+      .candidate-card {
+        padding: 2rem;
+      }
+
+      .match-score {
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+      }
+    }
     * {
       box-sizing: border-box;
       margin: 0;
@@ -223,6 +484,21 @@
       transform: none;
       box-shadow: none;
     }
+
+    /* Enhanced button states */
+    #btnLoader {
+      display: none;
+    }
+
+    .button-searching #btnText {
+      display: none;
+    }
+
+    .button-searching #btnLoader {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
     
     #result {
       display: none;
@@ -341,65 +617,130 @@
         </div>
         <button type="submit" id="submitBtn">
           <span id="btnText">Find Job Seekers</span>
-          <span id="btnLoader" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Searching...</span>
+          <span id="btnLoader"><i class="fas fa-spinner fa-spin"></i> Searching...</span>
         </button>
       </form>
     </div>
     
-    <div id="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Finding candidates...</p>
+    <div class="searching-container" id="searchingContainer">
+      <p class="searching-text">Searching qualified candidates for you who are seeking jobs in the same state</p>
+      <div>
+        <span class="searching-dots"></span>
+        <span class="searching-dots"></span>
+        <span class="searching-dots"></span>
+      </div>
     </div>
     
-    <div id="result" class="card">
-      <!-- Results will be populated here -->
+    <div class="results-container" id="resultsContainer">
+      <!-- Candidate cards will be inserted here by JavaScript -->
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-  
   <script>
-    const logoContainer = document.getElementById('logoContainer');
-    const colors = ['#FFD700', '#FFC125', '#FFDF00', '#FFEC8B', '#FFFACD'];
-    
-    function createGlitterParticle() {
-      const particle = document.createElement('div');
-      particle.className = 'glitter-particle';
-      
-      const size = Math.random() * 8 + 2;
-      const duration = Math.random() * 3 + 2;
-      const delay = Math.random() * 2;
-      
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      particle.style.left = `${Math.random() * 100}px`;
-      particle.style.top = `${Math.random() * 100}px`;
-      particle.style.animation = `glitterFall ${duration}s linear ${delay}s forwards`;
-      particle.style.setProperty('--glitter-x', `${(Math.random() - 0.5) * 300}px`);
-      particle.style.setProperty('--glitter-y', `${Math.random() * 500}px`);
-      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      
-      logoContainer.appendChild(particle);
-      
-      setTimeout(() => {
-        particle.remove();
-      }, (duration + delay) * 1000);
-    }
-    
-    function startGlitterEffect() {
-      createGlitterParticle();
-      if (Math.random() > 0.3) {
-        setTimeout(createGlitterParticle, 100);
-      }
-      setTimeout(startGlitterEffect, 300);
-    }
-    
-    window.addEventListener('load', () => {
-      startGlitterEffect();
-      
-      logoContainer.addEventListener('mouseenter', () => {
-        for (let i = 0; i < 15; i++) {
-          setTimeout(createGlitterParticle, i * 50);
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('jobDescForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const searchingContainer = document.getElementById('searchingContainer');
+      const resultsContainer = document.getElementById('resultsContainer');
+  
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+  
+        // Get form values
+        const jobDescription = document.getElementById('jobDescription').value;
+        const state = document.getElementById('stateSelection').value;
+  
+        // Clear previous results
+        resultsContainer.innerHTML = '';
+        resultsContainer.style.display = 'none';
+  
+        // Show button searching state
+        submitBtn.classList.add('button-searching');
+        submitBtn.disabled = true;
+  
+        // Show searching animation after a short delay
+        setTimeout(() => {
+          searchingContainer.style.display = 'block';
+        }, 500);
+  
+        try {
+          // Make API call
+          const response = await fetch('http://localhost:5000/api/match-candidates', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              jobDescription: jobDescription,
+              state: state
+            })
+          });
+  
+          const data = await response.json();
+  
+          // Hide searching animation and reset button
+          searchingContainer.style.display = 'none';
+          submitBtn.classList.remove('button-searching');
+          submitBtn.disabled = false;
+  
+          // Always show results container after search
+          resultsContainer.style.display = 'block';
+  
+          if (data.success && data.matches && data.matches.length > 0) {
+            // Generate candidate cards
+            data.matches.forEach((candidate, index) => {
+              const card = document.createElement('div');
+              card.className = 'candidate-card';
+              card.style.setProperty('--order', index);
+              
+              // Enhanced resume text formatting
+              let formattedResumeText = candidate.resumeText || 'No resume text available';
+              if (formattedResumeText !== 'No resume text available') {
+                // Add some basic formatting to make resume text look better
+                formattedResumeText = formattedResumeText
+                  .replace(/\n/g, '<br>')
+                  .replace(/([A-Z][A-Z\s]+):/g, '<strong>$1:</strong>')
+                  .replace(/(EXPERIENCE|EDUCATION|SKILLS|PROJECTS|CONTACT|SUMMARY|OBJECTIVE)/gi, '<strong>$1</strong>');
+              }
+  
+              card.innerHTML = `
+                <div class="candidate-header">
+                  <h3 class="candidate-name">${candidate.name || 'Candidate'}</h3>
+                  <div class="match-score">${candidate.score || '0'}% Match</div>
+                </div>
+                <div class="candidate-details">
+                  <p>${formattedResumeText}</p>
+                </div>
+                <a href="${candidate.linkedin || '#'}" target="_blank" class="linkedin-btn">
+                  <i class="fab fa-linkedin"></i> View LinkedIn Profile
+                </a>
+              `;
+  
+              resultsContainer.appendChild(card);
+            });
+          } else {
+            // No candidates found
+            resultsContainer.innerHTML = `
+              <div class="no-results" style="text-align: center; color: var(--text); padding: 2rem;">
+                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-light);"></i>
+                <h3>No matching candidates found</h3>
+                <p>Try adjusting your search criteria</p>
+              </div>
+            `;
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          searchingContainer.style.display = 'none';
+          submitBtn.classList.remove('button-searching');
+          submitBtn.disabled = false;
+          resultsContainer.style.display = 'block';
+          resultsContainer.innerHTML = `
+            <div class="error" style="text-align: center; color: #ff6b6b; padding: 2rem;">
+              <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+              <h3>Error loading candidates</h3>
+              <p>${error.message || 'Please try again later'}</p>
+            </div>
+          `;
         }
       });
     });
