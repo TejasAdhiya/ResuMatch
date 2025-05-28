@@ -250,6 +250,19 @@
       color: var(--text);
     }
     
+    /* Ensure input fields maintain dark theme */
+    input:not([type="file"]) {
+      background-color: #3a3a3a !important;
+      color: var(--text) !important;
+    }
+    
+    input:not([type="file"]):focus,
+    input:not([type="file"]):valid,
+    input:not([type="file"]):invalid {
+      background-color: #3a3a3a !important;
+      color: var(--text) !important;
+    }
+    
     input:focus {
       outline: none;
       border-color: var(--primary);
@@ -939,6 +952,11 @@ document.addEventListener('visibilitychange', () => {
             
           </select>
         </div>
+        <div class="form-group">
+          <label for="linkedinUrl">LinkedIn Profile URL</label>
+          <input type="url" id="linkedinUrl" name="linkedinUrl" placeholder="https://www.linkedin.com/in/yourprofile" required>
+          <div id="linkedinUrlError" class="error-message" style="display: none; color: var(--error); margin-top: 5px; font-size: 0.9rem;"></div>
+        </div>
         
         <button type="submit" id="submitBtn">
   <span id="btnContent">
@@ -1022,10 +1040,75 @@ document.addEventListener('visibilitychange', () => {
         label.textContent = 'Choose PDF or DOCX file';
       }
     });
-
+// LinkedIn URL validation
+document.getElementById('linkedinUrl').addEventListener('input', function() {
+  const input = this;
+  const errorMsg = document.getElementById('linkedinUrlError');
+  // Get the notification popup that's showing "Please enter a URL"
+  const notification = document.querySelector('.notification');
+  // Updated pattern to accept URLs with or without https:// prefix
+  const urlPattern = /^(https?:\/\/)?www\.linkedin\.com\/in\/[\w\-\.]+\/?$/i;
+  
+  if (input.value && !urlPattern.test(input.value)) {
+    errorMsg.textContent = "Please enter a valid LinkedIn profile URL";
+    errorMsg.style.display = 'block';
+    errorMsg.style.color = 'var(--error)';
+    input.classList.add('error');
+    input.style.backgroundColor = '#3a3a3a'; // Keep the theme background color
+    // Show notification for invalid URL
+    if (notification) notification.style.display = 'flex';
+  } else if (input.value) {
+    // Show success message when URL is valid
+    errorMsg.textContent = "LinkedIn URL is valid";
+    errorMsg.style.display = 'block';
+    errorMsg.style.color = 'var(--matched-color)'; // Green color for success
+    input.classList.remove('error');
+    input.style.backgroundColor = '#3a3a3a'; // Keep the theme background color
+    // Hide notification when URL is valid
+    if (notification) notification.style.display = 'none';
+  } else {
+    // Empty input field
+    errorMsg.style.display = 'none';
+    input.classList.remove('error');
+    input.style.backgroundColor = '#3a3a3a'; // Keep the theme background color
+    // Show notification for empty field
+    if (notification) notification.style.display = 'flex';
+  }
+});
 document.getElementById('jobFetchForm').addEventListener('submit', async function(e) {
   e.preventDefault();
+  e.stopPropagation(); // Additional prevention
   
+  console.log('Form submission started...');
+  
+  // First validate the LinkedIn URL
+  const linkedinUrl = document.getElementById('linkedinUrl').value;
+  const urlPattern = /^(https?:\/\/)?www\.linkedin\.com\/in\/[\w\-\.]+\/?$/i;
+  
+  if (!linkedinUrl || !urlPattern.test(linkedinUrl)) {
+    document.getElementById('linkedinUrlError').textContent = "Please enter a valid LinkedIn profile URL";
+    document.getElementById('linkedinUrlError').style.display = 'block';
+    document.getElementById('linkedinUrlError').style.color = 'var(--error)';
+    document.getElementById('linkedinUrl').classList.add('error');
+    const notification = document.querySelector('.notification');
+    if (notification) notification.style.display = 'flex';
+    return false; // Explicitly return false
+  }
+
+  // Check if resume file is selected
+  const resumeFile = document.getElementById('resume').files[0];
+  if (!resumeFile) {
+    alert('Please select a resume file');
+    return false;
+  }
+
+  // Check if state is selected
+  const selectedState = document.getElementById('state').value;
+  if (!selectedState) {
+    alert('Please select a state');
+    return false;
+  }
+
   const submitBtn = document.getElementById('submitBtn');
   const btnText = document.getElementById('btnText');
   const btnLoader = document.getElementById('btnLoader');
@@ -1033,87 +1116,181 @@ document.getElementById('jobFetchForm').addEventListener('submit', async functio
   const result = document.getElementById('result');
   
   // Show loading state
-// Show loading state
-// Show loading state
-submitBtn.disabled = true;
-submitBtn.classList.add('loading');
-document.getElementById('btnContent').style.display = 'none';
-btnLoader.style.display = 'flex';
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+  document.getElementById('btnContent').style.display = 'none';
+  btnLoader.style.display = 'flex';
   loading.style.display = 'block';
   result.style.display = 'none';
   
+  let jobsData = null;
+  let profileSaved = false;
+  
   try {
-    const formData = new FormData();
-    formData.append('file', document.getElementById('resume').files[0]);
-    formData.append('state', document.getElementById('state').value);
+    // STEP 1: Fetch jobs using Python Flask endpoint (port 5000)
+    console.log('Starting job fetch from Flask endpoint...');
     
-    const response = await fetch('http://127.0.0.1:5000/api/fetch-linkedin-jobs', {
+    const jobsFormData = new FormData();
+    jobsFormData.append('file', resumeFile);
+    jobsFormData.append('state', selectedState);
+    jobsFormData.append('linkedin_url', linkedinUrl);
+    
+    console.log('Making request to Flask server...');
+    console.log('Flask endpoint: http://127.0.0.1:5000/api/fetch-linkedin-jobs');
+    
+    const jobsResponse = await fetch('http://127.0.0.1:5000/api/fetch-linkedin-jobs', {
       method: 'POST',
-      body: formData
+      body: jobsFormData
     });
     
-    if (!response.ok) throw new Error('Failed to fetch jobs');
+    console.log('Jobs response status:', jobsResponse.status);
+    console.log('Jobs response ok:', jobsResponse.ok);
     
-    const data = await response.json();
-    
-    // DEBUG: Log the full API response
-    console.log("API Response:", data);
-    
-    // Check if jobs array exists and has items
-    if (!data.jobs || data.jobs.length === 0) {
-      throw new Error('No jobs found matching your profile');
+    if (!jobsResponse.ok) {
+      const errorData = await jobsResponse.json().catch(() => ({ error: 'Failed to parse error response' }));
+      console.error('Jobs fetch error:', errorData);
+      throw new Error(errorData.error || `HTTP ${jobsResponse.status}: Failed to fetch jobs`);
     }
     
-    // Generate job cards HTML
+    jobsData = await jobsResponse.json();
+    console.log("Jobs API Response:", jobsData);
+    
+    if (!jobsData.jobs || jobsData.jobs.length === 0) {
+      console.warn('No jobs found in response');
+      throw new Error(jobsData.error || 'No jobs found matching your profile');
+    }
+    
+    console.log(`Found ${jobsData.jobs.length} jobs`);
+    
+    // STEP 2: Save profile data to MongoDB (Node.js server on port 3001)
+    // Run this in parallel/background without affecting the job display
+    console.log('Starting profile save to MongoDB...');
+    
+    const profileFormData = new FormData();
+    profileFormData.append('file', resumeFile);
+    profileFormData.append('state', selectedState);
+    profileFormData.append('linkedin_url', linkedinUrl);
+    
+    console.log('Saving profile to MongoDB...');
+    console.log('Profile data:', {
+      fileName: resumeFile.name,
+      state: selectedState,
+      linkedinUrl: linkedinUrl
+    });
+    
+    // Use a separate promise for profile saving to avoid blocking job display
+    const saveProfilePromise = fetch('http://localhost:3001/api/save-profile', {
+      method: 'POST',
+      body: profileFormData
+    }).then(async (saveResponse) => {
+      console.log('Save response status:', saveResponse.status);
+      console.log('Save response ok:', saveResponse.ok);
+      
+      if (!saveResponse.ok) {
+        const saveError = await saveResponse.json().catch(() => ({ error: 'Failed to parse save error' }));
+        console.error('Save profile error:', saveError);
+        // Don't throw error here - just log it so jobs still display
+        console.warn('Profile save failed, but continuing with job display');
+        return null;
+      }
+      
+      const saveResult = await saveResponse.json();
+      console.log('Profile saved successfully:', saveResult);
+      profileSaved = true;
+      return saveResult;
+    }).catch((saveError) => {
+      console.error('Profile save promise error:', saveError);
+      console.warn('Profile save failed, but continuing with job display');
+      return null;
+    });
+    
+    // Display jobs immediately without waiting for profile save
+    console.log('Displaying jobs...');
+    
+    // Generate job cards HTML with your fetched jobs
     result.innerHTML = `
-  <div class="results-header">
-    <h2><i class="fas fa-briefcase"></i> Top Most Suitable Jobs For You</h2>
-    <p>Based on your resume and ${data.state} location</p>
-  </div>
-  <div class="job-cards">
-    ${data.jobs.map(job => `
-  <div class="job-card" onclick="window.open('${job.url}', '_blank')">
-    <button class="save-job-btn ${isJobSaved(job.title, job.company) ? 'saved' : ''}" 
-            onclick="event.stopPropagation(); toggleSaveJob(this, {
-              title: '${job.title.replace(/'/g, "\\'")}',
-              company: '${job.company.replace(/'/g, "\\'")}',
-              location: '${job.location.replace(/'/g, "\\'")}',
-              url: '${job.url}'
-            })">
-      <i class="fas fa-heart"></i>
-    </button>
-    <h3>${job.title}</h3>
-    <p class="company"><i class="fas fa-building"></i> ${job.company}</p>
-    <p class="location"><i class="fas fa-map-marker-alt"></i> ${job.location}</p>
-    <div class="job-footer">
-      <span class="apply-btn">View on LinkedIn <i class="fas fa-external-link-alt"></i></span>
-    </div>
-  </div>
-`).join('')}
+      <div class="results-header">
+        <h2><i class="fas fa-briefcase"></i> Top Most Suitable Jobs For You</h2>
+        <p>Based on your resume and ${selectedState} location.
+        ${jobsData.analysis ? `
+          <div class="analysis-summary">
+            <p><strong>Predicted Role:</strong> ${jobsData.analysis.job_title || 'N/A'}</p>
+            <p><strong>Experience Level:</strong> ${jobsData.analysis.experience_level || 'N/A'}</p>
+            <p><strong>Key Skills:</strong> ${jobsData.analysis.skills ? jobsData.analysis.skills.slice(0, 5).join(', ') : 'N/A'}</p>
+          </div>
+        ` : ''}
+      </div>
+      <div class="job-cards">
+        ${jobsData.jobs.map(job => `
+          <div class="job-card" onclick="window.open('${job.url || job.link || '#'}', '_blank')">
+            <button class="save-job-btn ${typeof isJobSaved !== 'undefined' && isJobSaved(job.title, job.company) ? 'saved' : ''}" 
+                    onclick="event.stopPropagation(); ${typeof toggleSaveJob !== 'undefined' ? `toggleSaveJob(this, {
+                      title: '${(job.title || '').replace(/'/g, "\\'")}',
+                      company: '${(job.company || '').replace(/'/g, "\\'")}',
+                      location: '${(job.location || '').replace(/'/g, "\\'")}',
+                      url: '${job.url || job.link || '#'}'
+                    })` : 'console.log("Save job function not implemented")'}">
+              <i class="fas fa-heart"></i>
+            </button>
+            <h3>${job.title || 'Job Title Not Available'}</h3>
+            <p class="company"><i class="fas fa-building"></i> ${job.company || 'Company Not Available'}</p>
+            <p class="location"><i class="fas fa-map-marker-alt"></i> ${job.location || 'Location Not Available'}</p>
+            
+            <div class="job-footer">
+              <span class="apply-btn">View on LinkedIn <i class="fas fa-external-link-alt"></i></span>
+            </div>
+          </div>
+        `).join('')}
 
-`;
+    `;
+    
+    console.log('Jobs displayed successfully');
+    
+
     
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Complete Error Details:", error);
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    
     result.innerHTML = `
       <div class="error-card">
         <i class="fas fa-exclamation-triangle"></i>
-        <h3>Error Fetching Jobs</h3>
-        <p>${error.message}</p>
-        <button onclick="location.reload()">Try Again</button>
+        <h3>Error Processing Request</h3>
+        <p><strong>Error:</strong> ${error.message}</p>
+        <div style="margin-top: 10px; font-size: 0.9rem; color: #ccc;">
+          <p><strong>Troubleshooting steps:</strong></p>
+          <ul style="text-align: left; margin-left: 20px;">
+            <li>Ensure MongoDB server is running on port 3001</li>
+            <li>Ensure Flask server is running on port 5000</li>
+            <li>Check browser console for detailed error logs</li>
+            <li>Verify your LinkedIn URL format</li>
+          </ul>
+        </div>
+        <button onclick="window.location.reload()" style="margin-top: 15px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
       </div>
     `;
   } finally {
+    // Hide loading state and show results
     loading.style.display = 'none';
     result.style.display = 'block';
     submitBtn.disabled = false;
-submitBtn.classList.remove('loading');
-document.getElementById('btnContent').style.display = 'flex';
-btnLoader.style.display = 'none';
+    submitBtn.classList.remove('loading');
+    document.getElementById('btnContent').style.display = 'flex';
+    btnLoader.style.display = 'none';
+    
+    // Smooth scroll to results
     result.scrollIntoView({ behavior: 'smooth' });
+    
+    console.log('Form submission process completed');
   }
+  
+  // Prevent any form submission
+  return false;
 });
-    function toggleSaveJob(button, jobData) {
+
+function toggleSaveJob(button, jobData) {
   if (button.classList.contains('saved')) {
     // Remove from saved jobs
     removeSavedJob(jobData.title, jobData.company);
@@ -1125,20 +1302,24 @@ btnLoader.style.display = 'none';
     }
   }
 }
-    // Start glitter effect when page loads
-    window.addEventListener('load', () => {
-      startGlitterEffect();
-      
-      // Enhanced effect on hover
-      logoContainer.addEventListener('mouseenter', () => {
-        for (let i = 0; i < 15; i++) {
-          setTimeout(createGlitterParticle, i * 50);
-        }
-      });
 
-      // Add state options dynamically (example - replace with your actual states)
-      const states = [
-       "Andhra Pradesh",
+// Start glitter effect when page loads
+window.addEventListener('load', () => {
+  startGlitterEffect();
+  
+  // Enhanced effect on hover
+  const logoContainer = document.querySelector('.logo-container'); // Make sure this selector exists
+  if (logoContainer) {
+    logoContainer.addEventListener('mouseenter', () => {
+      for (let i = 0; i < 15; i++) {
+        setTimeout(createGlitterParticle, i * 50);
+      }
+    });
+  }
+
+  // Add state options dynamically
+  const states = [
+    "Andhra Pradesh",
     "Arunachal Pradesh",
     "Assam",
     "Bihar",
@@ -1167,16 +1348,28 @@ btnLoader.style.display = 'none';
     "Uttar Pradesh",
     "Uttarakhand",
     "West Bengal"
-      ];
-      
-      const stateSelect = document.getElementById('state');
-      states.forEach(state => {
-        const option = document.createElement('option');
-        option.value = state;
-        option.textContent = state;
-        stateSelect.appendChild(option);
-      });
+  ];
+  
+  const stateSelect = document.getElementById('state');
+  if (stateSelect) {
+    states.forEach(state => {
+      const option = document.createElement('option');
+      option.value = state;
+      option.textContent = state;
+      stateSelect.appendChild(option);
     });
+  }
+});
+
+// Additional prevention for any form reloads
+window.addEventListener('beforeunload', function(e) {
+  // This will prevent accidental page reloads, but allow intentional ones
+  const jobResults = document.getElementById('result');
+  if (jobResults && jobResults.style.display === 'block' && jobResults.innerHTML.trim() !== '') {
+    e.preventDefault();
+    e.returnValue = 'You have job results displayed. Are you sure you want to leave?';
+  }
+});
 
   </script>
   

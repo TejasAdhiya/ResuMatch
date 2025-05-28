@@ -169,7 +169,31 @@
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2);
     }
-    
+        .form-group {
+      margin-bottom: 20px;
+    }
+        textarea, select {
+      width: 100%;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 1rem;
+      color: var(--text);
+      font-family: inherit;
+    }
+      textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 5px var(--primary-light);
+    }
+      select {
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"%3E%3Cpolygon points="0,0 20,0 10,10" fill="%23f0f0f0"/%3E%3C/svg%3E');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 12px;
+    }
     button {
       background: var(--primary);
       color: white;
@@ -281,6 +305,40 @@
           </div>
         </div>
         
+          <div class="form-group">
+          <label for="stateSelection">Select State</label>
+          <select id="stateSelection" name="state" placeholder="Select a state in which your company is located" required>
+            <option value="" disabled selected>Select a state in which your company is located</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Assam">Assam</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Goa">Goa</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Sikkim">Sikkim</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="West Bengal">West Bengal</option>
+          </select>
+        </div>
         <button type="submit" id="submitBtn">
           <span id="btnText">Find Job Seekers</span>
           <span id="btnLoader" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Searching...</span>
