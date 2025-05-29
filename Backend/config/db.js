@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
+    await mongoose.connect('mongodb://localhost:27017/resumatch', {
       dbName: "resumatch", // Force connect to your database
       useNewUrlParser: true,
       useUnifiedTopology: true,

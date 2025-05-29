@@ -559,6 +559,23 @@
         padding: 25px;
       }
     }
+
+    .resume-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, #ffd700, #daa520);
+      color: #232526;
+      font-weight: 700;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(218, 165, 32, 0.15);
+      transition: background 0.2s, color 0.2s;
+    }
+    .resume-btn:hover {
+      background: linear-gradient(135deg, #daa520, #ffd700);
+      color: #000;
+    }
   </style>
 </head>
 <body>
@@ -714,6 +731,7 @@
                 <a href="${candidate.linkedin || '#'}" target="_blank" class="linkedin-btn">
                   <i class="fab fa-linkedin"></i> View LinkedIn Profile
                 </a>
+                ${candidate.resumeUrl ? `<a href="http://localhost:5000${candidate.resumeUrl}" target="_blank" class="resume-btn">📄 View Resume</a>` : ''}
               `;
   
               resultsContainer.appendChild(card);

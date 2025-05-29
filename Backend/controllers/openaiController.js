@@ -3,7 +3,7 @@ const cosineSimilarity = require('compute-cosine-similarity');
 const { extractText } = require('../util/pdfParser');
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: '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',
 });
 
 const calculateSimilarity = async (jobDesc, resumeText) => {
