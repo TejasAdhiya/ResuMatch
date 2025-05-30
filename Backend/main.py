@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from routes.match import router as match_router
+from routes.bulk_analysis import router as bulk_analysis_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -8,7 +10,7 @@ def read_root():
     return {"message": "Welcome to ResuMatch API"}
 
 app.include_router(match_router, prefix="/api")
-from fastapi.middleware.cors import CORSMiddleware
+app.include_router(bulk_analysis_router, prefix="/api")
 
 app.add_middleware(
     CORSMiddleware,

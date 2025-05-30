@@ -39,15 +39,7 @@
     html {
       scroll-behavior: smooth;
     }
-    body {
-      opacity: 0;
-      animation: fadeIn 1s ease-in forwards;
-    }
     
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
     body {
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
@@ -401,6 +393,87 @@
         padding: 25px;
       }
     }
+    /* Enhanced Suggestions Styling */
+.suggestions-container {
+  margin-top: 15px;
+}
+
+.suggestion-section {
+  margin-bottom: 25px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.section-header {
+  padding: 12px 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.strength-section {
+  border-left: 4px solid var(--matched-color);
+}
+
+.improvement-section {
+  border-left: 4px solid var(--missing-color);
+}
+
+.tip-section {
+  border-left: 4px solid var(--primary);
+}
+
+.strength-header {
+  background-color: rgba(80, 200, 120, 0.1);
+  color: var(--matched-color);
+}
+
+.improvement-header {
+  background-color: rgba(255, 107, 107, 0.1);
+  color: var(--missing-color);
+}
+
+.tip-header {
+  background-color: rgba(184, 134, 11, 0.1);
+  color: var(--primary-light);
+}
+
+.suggestion-list {
+  padding: 10px 15px 10px 40px;
+  background-color: rgba(45, 45, 45, 0.5);
+}
+
+.suggestion-list li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+  position: relative;
+}
+
+.suggestion-list li:before {
+  content: "•";
+  color: var(--primary);
+  position: absolute;
+  left: -20px;
+}
+
+.tip-content {
+  padding: 15px;
+  background-color: rgba(45, 45, 45, 0.5);
+  line-height: 1.7;
+}
+
+.tip-content p {
+  margin-bottom: 10px;
+}
+
+.no-suggestions {
+  padding: 15px;
+  background-color: rgba(45, 45, 45, 0.3);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--text-light);
+}
   </style>
 </head>
 <body>

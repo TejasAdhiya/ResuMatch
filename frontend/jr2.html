@@ -722,11 +722,12 @@
   
               card.innerHTML = `
                 <div class="candidate-header">
-                  <h3 class="candidate-name">${candidate.name || 'Candidate'}</h3>
+                  <h3 class="candidate-name">${candidate.name || 'Name not found'}</h3>
                   <div class="match-score">${candidate.score || '0'}% Match</div>
                 </div>
                 <div class="candidate-details">
-                  <p>${formattedResumeText}</p>
+                  <div><strong>Email:</strong> ${candidate.email || 'Not found'}</div>
+                  <div><strong>Contact:</strong> ${candidate.contact || 'Not found'}</div>
                 </div>
                 <a href="${candidate.linkedin || '#'}" target="_blank" class="linkedin-btn">
                   <i class="fab fa-linkedin"></i> View LinkedIn Profile
