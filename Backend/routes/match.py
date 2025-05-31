@@ -1,7 +1,10 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
+from fastapi.responses import FileResponse
 from utils.matcher import calculate_match
 from utils.resume_parser import extract_resume_text
+from utils.resume_updater import update_resume_with_suggestions, cleanup_temp_file
 import logging
+import os
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -77,6 +80,65 @@ async def upload_resume(
         logger.error(f"Unexpected error in processing: {str(e)}")
         logger.error(f"Error type: {type(e)}")
         raise HTTPException(status_code=500, detail="Internal server error during resume processing")
+
+@router.post("/update-resume")
+async def update_resume(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    job_description: str = Form(...)
+):
+    """
+    Update the resume with AI suggestions and missing keywords.
+    Only supports DOCX files.
+    """
+    try:
+        # Validate file type
+        if not file.filename.lower().endswith('.docx'):
+            raise HTTPException(
+                status_code=400,
+                detail="Only DOCX files can be automatically updated. Please convert your resume to DOCX format."
+            )
+
+        # Read file contents
+        contents = await file.read()
+        
+        # Extract text and calculate match
+        resume_text = extract_resume_text(contents, file.filename)
+        if not resume_text:
+            raise HTTPException(
+                status_code=400,
+                detail="Could not extract text from resume. Please ensure the file is readable."
+            )
+
+        # Get analysis results
+        result = await calculate_match(resume_text, job_description)
+        
+        # Update the resume with suggestions
+        updated_file_path = update_resume_with_suggestions(
+            contents,
+            result["missing_keywords"],
+            result["suggestion"],
+            job_description
+        )
+
+        # Schedule cleanup of the temporary file
+        background_tasks.add_task(cleanup_temp_file, updated_file_path)
+
+        # Return the updated file
+        return FileResponse(
+            updated_file_path,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename=f"Updated_{file.filename}"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating resume: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="An error occurred while updating the resume. Please try again."
+        )
 
 def validate_and_enhance_results(result):
     """Validate and enhance the results before sending to frontend"""

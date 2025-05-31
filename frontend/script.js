@@ -188,6 +188,7 @@ function validateAndEnhanceData(data) {
 // Display results with enhanced formatting
 function displayResults(data) {
   const resultDiv = document.getElementById("result");
+  const updateResumeContainer = document.getElementById("updateResumeContainer");
   
   resultDiv.innerHTML = `
     <h2 id="resultsHeader">📊 Resume Analysis Results</h2>
@@ -198,38 +199,39 @@ function displayResults(data) {
         <div class="progress-bar">
           <div class="progress-fill" style="width: ${data.similarity_score}%"></div>
         </div>
-        <p class="score-text">Your resume matches <strong>${data.similarity_score}%</strong> of the job requirements</p>
-        <p class="score-interpretation">${getScoreInterpretation(data.similarity_score)}</p>
+        <p class="score-text">${data.similarity_score}% Match</p>
       </div>
     </div>
     
     <div class="result-section">
       <h3>✅ Matched Keywords</h3>
-      <p>These keywords from the job description were found in your resume:</p>
-      <div class="keyword-container" id="matchedKeywords">
-        ${(data.matched_keywords && data.matched_keywords.length > 0) 
-          ? data.matched_keywords.map(kw => `<span class="keyword matched-keyword">${kw}</span>`).join('') 
-          : '<p style="color: var(--text-light); font-style: italic;">No keywords matched. Consider adding relevant terms from the job description.</p>'}
+      <div class="keyword-container">
+        ${data.matched_keywords.map(kw => `<span class="keyword matched-keyword">${kw}</span>`).join('')}
       </div>
     </div>
     
     <div class="result-section">
       <h3>❌ Missing Keywords</h3>
-      <p>Consider adding these important keywords to improve your match:</p>
-      <div class="keyword-container" id="missingKeywords">
-        ${(data.missing_keywords && data.missing_keywords.length > 0) 
-          ? data.missing_keywords.map(kw => `<span class="keyword missing-keyword">${kw}</span>`).join('') 
-          : '<p style="color: var(--matched-color); font-style: italic;">Great job! No critical keywords missing.</p>'}
+      <div class="keyword-container">
+        ${data.missing_keywords.map(kw => `<span class="keyword missing-keyword">${kw}</span>`).join('')}
       </div>
     </div>
     
     <div class="result-section">
-      <h3>🚀 Optimization Suggestions</h3>
-      <div class="suggestions-container">
+      <h3>💡 AI Suggestions</h3>
+      <div class="suggestions-text">
         ${formatSuggestions(data.suggestion)}
       </div>
     </div>
   `;
+
+  // Show update resume button if the file is DOCX
+  const resumeFile = document.getElementById("resume").files[0];
+  if (resumeFile && resumeFile.name.toLowerCase().endsWith('.docx')) {
+    updateResumeContainer.style.display = 'block';
+  } else {
+    updateResumeContainer.style.display = 'none';
+  }
 }
 
 // Get score interpretation
@@ -403,3 +405,55 @@ function handleLinkedInLogin(response) {
   // Redirect to role selection
   location.href = 'landing.html';
 }
+
+// Add event listener for update resume button
+document.getElementById("updateResumeBtn").addEventListener("click", async function() {
+  const submitBtn = this;
+  const originalText = submitBtn.innerHTML;
+  
+  try {
+    // Disable button and show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Resume...';
+    
+    const formData = new FormData();
+    formData.append("file", document.getElementById("resume").files[0]);
+    formData.append("job_description", document.getElementById("jobDescription").value.trim());
+    
+    const response = await fetch("http://127.0.0.1:8000/api/update-resume", {
+      method: "POST",
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Failed to update resume");
+    }
+    
+    // Get the file blob
+    const blob = await response.blob();
+    
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Updated_" + document.getElementById("resume").files[0].name;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Cleanup
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    
+    // Show success message
+    alert("Resume updated successfully! Your new resume has been downloaded.");
+    
+  } catch (error) {
+    console.error("Error updating resume:", error);
+    alert(error.message || "Failed to update resume. Please try again.");
+  } finally {
+    // Reset button state
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+  }
+});

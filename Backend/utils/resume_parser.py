@@ -1,6 +1,6 @@
+import io
 from docx import Document
 import os
-import io
 import re
 import pdfplumber
 import docx
@@ -13,7 +13,6 @@ def extract_resume_text(file_content: bytes, file_name: str) -> str:
             import pdfplumber
             import pytesseract
             from pdf2image import convert_from_bytes
-            import io
             text_pages = []
             with pdfplumber.open(io.BytesIO(file_content)) as pdf:
                 for i, page in enumerate(pdf.pages):
