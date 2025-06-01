@@ -1,10 +1,3 @@
-# ResuMatch – AI Resume Matching Agent
+# ResuMatch – Dream Ai Agent for job seekers and job recruiter.
 
-ResuMatch is an AI agent that helps job seekers improve their chances of getting hired. It analyzes resumes and job descriptions, gives a match score, identifies missing skills, and suggests improvements using AI.
-
-## Features
-- Upload resume (PDF/text)
-- Paste job description
-- Get match score (%)
-- Missing/matched skills
-- Smart suggestions using GPT
+ResuMatch is an AI-powered recruitment and job search platform that streamlines hiring for recruiters and job seekers. It features AI resume optimization, smart candidate-job matching, bulk resume analysis, and automated acceptance/rejection emails. Recruiters can easily find top candidates by state and job description, while job seekers receive tailored resume improvements and relevant job opportunities. Built with Python (Flask), Node.js (Express), MongoDB, and modern web technologies, ResuMatch bridges the gap between talent and opportunity.
