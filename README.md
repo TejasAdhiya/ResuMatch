@@ -125,15 +125,6 @@ ResuMatch/
 
 ---
 
-## 🌟 Real-World Impact Stories
-
-**Sarah's Success**: *"I was applying to 20+ jobs daily with no responses. ResuMatch's LinkedIn automation got me 3 interviews in my first week, and I landed my dream job at a tech startup!"*
-
-**TechCorp's Transformation**: *"We were drowning in 500+ resumes for each position. ResuMatch's bulk analysis helped us identify top candidates in minutes instead of days, and our hiring time dropped by 70%."*
-
-**Mike's Career Change**: *"Switching from finance to tech seemed impossible. ResuMatch's AI suggestions helped me rewrite my resume to highlight transferable skills, and I got 5 interview calls in 2 weeks!"*
-
----
 
 ## 🚀 Key Features Deep Dive
 
